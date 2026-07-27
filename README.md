@@ -126,38 +126,21 @@ TODO
 
 ## Detailed design discussion
 
-    ### Tricky design choice #1: Dedicated Events vs. Reusing `beforeinput` / `input`
+### Tricky design choice #1: Dedicated Events vs. Reusing `beforeinput` / `input`
 
-    * **Option A: Extending `beforeinput` and `input` events**
-      * *Design*: Use `beforeinput` with new `inputType` values (e.g. `inputType =
-  "formatBatchStart"` / `inputType = "formatBatchEnd"`) or fire a `beforeinput` event before the
-  batch transaction and an `input` event after the batch settles.
-      * *Why reconsidered*: 
-        1. **EditContext Architecture Alignment**: `EditContext` was specifically designed to
-  decouple text input handling from standard `contenteditable` DOM elements and the traditional
-  `beforeinput`/`input` event pipeline. Forcing `EditContext` users back onto `beforeinput`
-  breaks the architectural separation of `EditContext`.
-        2. **Semantics of `beforeinput` Cancelability**: `beforeinput` events are cancelable to
-  allow web applications to prevent DOM mutations. In native IME batch edits, the browser is
-  delivering input payloads driven directly by the OS IME; canceling `beforeinput` does not
-  cleanly map to OS-level `InputConnection#beginBatchEdit` semantics.
-        3. **Multiple Text Mutations per Batch**: A single batch transaction can contain multiple
-  distinct `textupdate` payload events. If `beforeinput`/`input` wrap individual text updates,
-  they fail to signal outer batch boundaries. If they wrap the entire batch, developers lose the
-  granular text update payloads required by `EditContext`.
+* **Option A: Extending `beforeinput` and `input` events**
+  * *Design*: Use `beforeinput` with new `inputType` values (e.g. `inputType = "formatBatchStart"` / `inputType = "formatBatchEnd"`) or fire a `beforeinput` event before the batch transaction and an `input` event after the batch settles.
+  * *Why reconsidered*: 
+    1. **EditContext Architecture Alignment**: `EditContext` was specifically designed to decouple text input handling from standard `contenteditable` DOM elements and the traditional `beforeinput`/`input` event pipeline. Forcing `EditContext` users back onto `beforeinput` breaks the architectural separation of `EditContext`.
+    2. **Semantics of `beforeinput` Cancelability**: `beforeinput` events are cancelable to allow web applications to prevent DOM mutations. In native IME batch edits, the browser is delivering input payloads driven directly by the OS IME; canceling `beforeinput` does not cleanly map to OS-level `InputConnection#beginBatchEdit` semantics.
+    3. **Multiple Text Mutations per Batch**: A single batch transaction can contain multiple distinct `textupdate` payload events. If `beforeinput`/`input` wrap individual text updates, they fail to signal outer batch boundaries. If they wrap the entire batch, developers lose the granular text update payloads required by `EditContext`.
 
-    * **Option B (Chosen): Dedicated `batcheditbegin` and `batcheditend` Events on
-  `EditContext`**
-      * *Design*: Add explicit lifecycle events `batcheditbegin` and `batcheditend` directly to
-  the `EditContext` interface.
-      * *Why chosen*: 
-        1. **Clear Lifecycle Sequence**: Provides explicit transaction boundary signals
-  (`batcheditbegin` -> `textupdate` ... `textupdate` -> `batcheditend`).
-        2. **Pre-Payload Setup**: Allows web text editors to freeze interim model updates
-  *before* the first `textupdate` payload arrives, and finalize the model transaction *after* all
-  text updates settle.
-        3. **Native EditContext Compatibility**: Integrates seamlessly alongside existing
-  `EditContext` events (`textupdate`, `textformatupdate`, `characterboundsupdate`).
+* **Option B (Chosen): Dedicated `batcheditbegin` and `batcheditend` Events on `EditContext`**
+  * *Design*: Add explicit lifecycle events `batcheditbegin` and `batcheditend` directly to the `EditContext` interface.
+  * *Why chosen*: 
+    1. **Clear Lifecycle Sequence**: Provides explicit transaction boundary signals (`batcheditbegin` $\rightarrow$ `textupdate` ... `textupdate` $\rightarrow$ `batcheditend`).
+    2. **Pre-Payload Setup**: Allows web text editors to freeze interim model updates *before* the first `textupdate` payload arrives, and finalize the model transaction *after* all text updates settle.
+    3. **Native EditContext Compatibility**: Integrates seamlessly alongside existing `EditContext` events (`textupdate`, `textformatupdate`, `characterboundsupdate`).
 
 ## Considered alternatives
 
