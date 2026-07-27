@@ -1,6 +1,6 @@
 # Explainer for EditContext Batch Edit Events (`batcheditbegin` / `batcheditend`)
 
-This proposal is an early design sketch by the Blink Editing and Web Input team to describe the generic problem of web applications processing interim model state during Input Method Editor (IME) batch edits, and to solicit feedback on the proposed solution. It has not been approved to ship in Chrome.
+This proposal is an early design sketch to describe the generic problem of web applications processing interim model state during Input Method Editor (IME) batch edits, and to solicit feedback on the proposed solution. It has not been approved to ship in Chrome.
 
 ---
 
