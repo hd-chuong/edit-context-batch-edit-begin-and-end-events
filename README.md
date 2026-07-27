@@ -45,7 +45,7 @@ reference. Look for [brackets].
 
 ## Introduction
 
-Input Method Editors (IMEs) frequently perform multi-edit operations wrapped inside native OS batch signals (`InputConnection#beginBatchEdit` and `InputConnection#endBatchEdit`). During a batch transaction, the IME assumes that the surrounding document state and selection coordinate frame remain stable until the entire sequence of atomic text mutations finishes.
+Input Method Editors (IMEs) frequently perform multi-edit operations wrapped inside native OS batch signals. In Android, the multi-edit operations are wrapped inside`InputConnection#beginBatchEdit` and `InputConnection#endBatchEdit`. During a batch transaction, the IME assumes that the surrounding document state and selection coordinate frame remain stable until the entire sequence of atomic text mutations finishes.
 
 Currently, the web-exposed `EditContext` API lacks standard events to notify web applications when a batch edit transaction starts and ends. Consequently, web text editors receive incoming text mutations as separate, unbatched events and immediately mutate their internal document model state.
 
