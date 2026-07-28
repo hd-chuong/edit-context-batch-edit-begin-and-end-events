@@ -67,8 +67,7 @@ This explainer proposes adding two new events to `EditContext`: `batcheditbegin`
 
 ## User research
 
-Feedback from web text editor developers shows that when batch text edits arrive from IMEs, the lack of transaction boundary signals forces web applications to process interim text updates individually. Web editors attempting to work around this issue rely on non-deterministic time-based heuristics (debouncers) to guess when a batch ends. Under heavy CPU load or rapid editing, these heuristics fail, exposing interim model state and corrupting document content.
-
+TODO
 ---
 
 ## Use cases
@@ -193,8 +192,4 @@ The `batcheditbegin` and `batcheditend` events do not expose user data or cross-
 
 ## References & acknowledgements
 
-Many thanks for valuable feedback and advice from:
-
-- Anupam Sneha (`snianu@microsoft.com`) — EditContext Spec Editor
-- Dan Libby (`dlibby@microsoft.com`) — EditContext Co-Creator
-- W3C Editing Working Group Members
+TODO
